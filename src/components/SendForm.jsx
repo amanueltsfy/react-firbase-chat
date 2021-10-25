@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { db, auth } from "../firebase";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 
-const SendForm = () => {
+const SendForm = ({ handleReload }) => {
   const [message, setMessage] = useState("");
 
   const sendMessage = async (e) => {
@@ -15,8 +15,9 @@ const SendForm = () => {
       photoURL: photoURL,
       uid: uid,
       createdAt: Timestamp.now(),
-    });
-
+    })
+      .then(() => handleReload(true))
+      .catch(() => handleReload(false));
     setMessage("");
   };
 

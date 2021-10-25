@@ -6,6 +6,7 @@ import SendForm from "./SendForm";
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
+  const [isReload, setIsReload] = useState(false);
 
   useEffect(() => {
     getMessages()
@@ -15,12 +16,16 @@ const Chat = () => {
         setMessages(tempMessage);
       })
       .catch((err) => console.error(err));
-  }, []);
+  }, [isReload]);
 
   const getMessages = async () => {
     return await getDocs(
       query(collection(db, "messages"), orderBy("createdAt"), limit(50))
     );
+  };
+
+  const handleReload = (value) => {
+    setIsReload(value);
   };
 
   return (
@@ -34,7 +39,7 @@ const Chat = () => {
                 <div
                   key={id}
                   className={`msg ${
-                    uid == auth.currentUser.uid ? "sent" : "received"
+                    uid === auth.currentUser.uid ? "sent" : "received"
                   }`}
                 >
                   <img src={photoURL} alt="profile" />
@@ -43,7 +48,7 @@ const Chat = () => {
               </div>
             ))}
       </div>
-      <SendForm />
+      <SendForm handleReload={handleReload} />
     </div>
   );
 };
